@@ -1,11 +1,12 @@
 from django.db import models
 from django.contrib import admin
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Customer(models.Model):
     name = models.CharField('Имя', max_length=100, blank=True)
-    phone_number = models.CharField('Телефон', max_length=20)
-    email = models.CharField('Почта', max_length=100, blank=True)
+    phone_number = PhoneNumberField('Телефон', max_length=20)
+    email = models.EmailField('Почта', max_length=100, blank=True)
     address = models.CharField('Адрес', max_length=200, blank=True)
 
     def __str__(self):

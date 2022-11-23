@@ -21,6 +21,7 @@ class CustomerAdmin(admin.ModelAdmin):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = [
+        'cake_type',
         'customer',
         'order_comment',
         'delivery_time',

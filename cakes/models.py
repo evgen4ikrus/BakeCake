@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib import admin
 
 
 class Customer(models.Model):
@@ -133,13 +134,14 @@ class Order(models.Model):
         null=True,
         blank=True
     )
-    cake_caption = models.CharField('Надпись', max_length=200)
-    order_comment = models.TextField('Комментарий к заказу')
+    cake_caption = models.CharField('Надпись', max_length=200, blank=True)
+    order_comment = models.TextField('Комментарий к заказу', blank=True)
     delivery_time = models.DateTimeField('Дата и время доставки', null=True, blank=True)
-    delivery_comment = models.TextField('Комментарий для курьера')
+    delivery_comment = models.TextField('Комментарий для курьера', blank=True)
     total_cost = models.IntegerField('Стоимость заказа', null=True, blank=True)
 
-    def __str__(self):
+    @admin.display(description='Торт')
+    def cake_type(self):
         cake_type = f'{self.cake_size.title} • {self.cake_form.title} • {self.cake_topping.title}'
         if self.cake_berry:
             cake_type += f' • {self.cake_berry.title}'
@@ -148,6 +150,9 @@ class Order(models.Model):
         if self.cake_caption:
             cake_type += ' • Надпись'
         return cake_type
+
+    def __str__(self):
+        return self.cake_type()
 
     class Meta:
         verbose_name = 'Заказ'

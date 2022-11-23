@@ -12,7 +12,7 @@ class Customer(models.Model):
 
     class Meta:
         verbose_name = 'Клиент'
-        verbose_name_plural = 'Клиенты'
+        verbose_name_plural = '       Клиенты'
 
 
 class CakeSize(models.Model):
@@ -24,7 +24,7 @@ class CakeSize(models.Model):
 
     class Meta:
         verbose_name = 'Размер торта'
-        verbose_name_plural = 'Размеры тортов'
+        verbose_name_plural = '     Размеры тортов'
 
 
 class CakeForm(models.Model):
@@ -36,7 +36,7 @@ class CakeForm(models.Model):
 
     class Meta:
         verbose_name = 'Форма торта'
-        verbose_name_plural = 'Формы тортов'
+        verbose_name_plural = '    Формы тортов'
 
 
 class CakeTopping(models.Model):
@@ -48,7 +48,7 @@ class CakeTopping(models.Model):
 
     class Meta:
         verbose_name = 'Топпинг'
-        verbose_name_plural = 'Топпинги'
+        verbose_name_plural = '   Топпинги'
 
 
 class CakeBerry(models.Model):
@@ -60,7 +60,7 @@ class CakeBerry(models.Model):
 
     class Meta:
         verbose_name = 'Ягода'
-        verbose_name_plural = 'Ягоды'
+        verbose_name_plural = '  Ягоды'
 
 
 class CakeDecor(models.Model):
@@ -72,7 +72,7 @@ class CakeDecor(models.Model):
 
     class Meta:
         verbose_name = 'Декор'
-        verbose_name_plural = 'Декоры'
+        verbose_name_plural = ' Декоры'
 
 
 class Order(models.Model):
@@ -151,4 +151,4 @@ class Order(models.Model):
 
     class Meta:
         verbose_name = 'Заказ'
-        verbose_name_plural = 'Заказы'
+        verbose_name_plural = '      Заказы'

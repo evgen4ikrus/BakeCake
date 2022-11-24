@@ -14,9 +14,8 @@ def index(request):
         'berries': CakeBerry.objects.all(),
         'decors': CakeDecor.objects.all()
     }
-    return render(request, template_name='index.html', context={
-        'cake_elements': cake_elements
-    })
+    return render(request, template_name='index.html',
+                  context={'cake_elements': cake_elements})
 
 
 def view_lk_order(request):

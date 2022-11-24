@@ -2,6 +2,7 @@ from django.shortcuts import render
 from yookassa import Payment, Configuration
 import uuid
 
+
 def index(request):
     return render(request, 'index.html')
 

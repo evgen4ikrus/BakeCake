@@ -2,22 +2,18 @@ from django.contrib import admin
 
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
                      Customer, Order)
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
 
 
-@admin.register(Customer)
-class CustomerAdmin(admin.ModelAdmin):
-    list_display = [
-        'name',
-        'phone_number',
-        'email',
-        'address'
-    ]
-    search_fields = [
-        'name',
-        'phone_number',
-        'email',
-        'address'
-    ]
+class CustomerInline(admin.StackedInline):
+    model = Customer
+    can_delete = False
+    verbose_name_plural = 'Покупатели'
+
+
+class UserAdmin(BaseUserAdmin):
+    inlines = [CustomerInline]
 
 
 @admin.register(Order)
@@ -76,3 +72,7 @@ class CakeToppingAdmin(admin.ModelAdmin):
         'title',
         'price'
     ]
+
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)

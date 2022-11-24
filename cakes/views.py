@@ -16,8 +16,12 @@ def view_lk(request):
 
 
 def make_payment(client_id, order_id, amount, description="CakeBaker order"):
-    Configuration.account_id = '960972'
-    Configuration.secret_key = 'test_8PDhbolVyRcVvZsmU0vy-jo4YRr53QiJv2CvwNYtQ3o'
+    #will fix after debug function and complete writting of views, don't beat me for a while :)
+    from environs import Env
+    env = Env()
+    env.read_env()
+    Configuration.account_id = env('YOOMONEY_SHOPID')
+    Configuration.secret_key = env('YOOMONEY_KEY')
     idempotence_key = str(uuid.uuid4())
     payment = Payment.create({
         "amount": {

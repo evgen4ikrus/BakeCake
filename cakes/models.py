@@ -1,16 +1,16 @@
 from django.contrib import admin
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+from django.contrib.auth.models import User
 
 
 class Customer(models.Model):
-    name = models.CharField('Имя', max_length=100, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = PhoneNumberField('Телефон', max_length=20)
-    email = models.EmailField('Почта', max_length=100, blank=True)
     address = models.CharField('Адрес', max_length=200, blank=True)
 
     def __str__(self):
-        return self.name
+        return str(self.phone_number)
 
     class Meta:
         verbose_name = 'Клиент'

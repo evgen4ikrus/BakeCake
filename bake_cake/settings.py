@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 from environs import Env
+from yookassa import Configuration
 
 env = Env()
 env.read_env()
@@ -137,3 +138,7 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configuration for YOOMONEY payment service
+Configuration.secret_key = env('YOOMONEY_KEY')
+Configuration.account_id = env('YOOMONEY_SHOPID')

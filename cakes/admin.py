@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Customer, Order, CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping
+
+from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
+                     Customer, Order)
 
 
 @admin.register(Customer)

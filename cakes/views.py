@@ -1,7 +1,17 @@
 from django.shortcuts import render
 from yookassa import Payment, Configuration
 import uuid
-# Create your views here.
+
+def index(request):
+    return render(request, 'index.html')
+
+
+def view_lk_order(request):
+    return render(request, 'lk-order.html')
+
+
+def view_lk(request):
+    return render(request, 'lk.html')
 
 
 def make_payment(client_id, order_id, amount, description="CakeBaker order"):

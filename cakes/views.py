@@ -12,12 +12,7 @@ def view_lk_order(request):
 
 
 def view_lk(request):
-    context = {
-        'Name':request.user.get_short_name(),
-        'Phone':request.user.customer.phone_number,
-        'Email':request.user.email
-            }
-    return render(request, 'lk.html', context=context)
+    return render(request, 'lk.html')
 
 
 def make_payment(client_id, order_id, amount, description="CakeBaker order"):

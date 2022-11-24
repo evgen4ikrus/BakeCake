@@ -3,3 +3,4 @@ environs==9.5.0
 flake8==5.0.4
 django-phonenumber-field==7.0.0
 phonenumberslite==8.13.0
+yookassa==2.3.2

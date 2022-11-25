@@ -1,4 +1,8 @@
+from django.shortcuts import render, redirect
+from yookassa import Payment, Configuration
+
 import uuid
+from .models import Customer, Order
 
 from django.shortcuts import render
 from yookassa import Configuration, Payment
@@ -7,24 +11,23 @@ from .models import CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping
 
 
 def index(request):
-    if request.method == 'POST':
-        size = request.POST.get('size')
-        form = request.POST.get('form')
-        topping = request.POST.get('topping')
-        berry = request.POST.get('berry')
-        decor = request.POST.get('decor')
-        caption = request.POST.get('words')
-        comment = request.POST.get('comment')
-        if size:
-            size = CakeSize.objects.get(id=size)
-        if form:
-            form = CakeForm.objects.get(id=form)
-        if topping:
-            topping = CakeTopping.objects.get(id=topping)
-        if berry:
-            berry = CakeBerry.objects.get(id=berry)
-        if decor:
-            decor = CakeDecor.objects.get(id=decor)
+    phone = request.GET.get('PHONE')
+    if phone:
+        email = request.GET.get('EMAIL')
+        address = request.GET.get('ADDRESS')
+        order_date = request.GET.get('DATE')
+        order_time = request.GET.get('TIME')
+        comment = request.GET.get('DELIVCOMMENTS')
+        customer_name = request.GET.get('NAME')
+        cake_levels = request.GET.get('LEVELS')
+        cake_form = request.GET.get('FORM')
+        cake_topping = request.GET.get('TOPPING')
+        cake_berries = request.GET.get('BERRIES')
+        cake_decor = request.GET.get('DECOR')
+        cake_words = request.GET.get('WORDS')
+        cake_name = request.GET.get('COMMENTS')
+        payment_url = make_payment(1,1,1000)
+        return redirect(payment_url)
 
     cake_elements = {
         'sizes': CakeSize.objects.all(),
@@ -90,7 +93,3 @@ def make_payment(client_id, order_id, amount, description="CakeBaker order"):
             }
         }, idempotence_key)
     return payment.confirmation.confirmation_url
-
-
-if __name__ == '__main__':
-    print(make_payment('1', '1', '100'))

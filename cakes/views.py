@@ -1,3 +1,7 @@
+
+from django.shortcuts import render, redirect
+from yookassa import Payment, Configuration
+
 import uuid
 
 from django.shortcuts import redirect, render
@@ -6,6 +10,11 @@ from yookassa import Configuration, Payment
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
                      Customer, Order)
 from django.contrib.auth.models import User
+
+from django.shortcuts import render
+from yookassa import Configuration, Payment
+
+from .models import CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping
 
 
 def index(request):
@@ -50,7 +59,34 @@ def index(request):
             )
         payment_url = make_payment(customer.id, order.id, total_cost)
         return redirect(payment_url)
-    return render(request, 'index.html')
+
+    cake_elements = {
+        'sizes': CakeSize.objects.all(),
+        'forms': CakeForm.objects.all(),
+        'toppings': CakeTopping.objects.all(),
+        'berries': CakeBerry.objects.all(),
+        'decors': CakeDecor.objects.all()
+    }
+    cake_elements_json = {
+        'size_titles': {0: 'не выбрано'} | {item.id: item.title for item in cake_elements['sizes']},
+        'size_costs': {0: 0} | {item.id: item.price for item in cake_elements['sizes']},
+        'form_titles': {0: 'не выбрано'} | {item.id: item.title for item in cake_elements['forms']},
+        'form_costs': {0: 0} | {item.id: item.price for item in cake_elements['forms']},
+        'topping_titles': {0: 'не выбрано'} | {item.id: item.title for item in cake_elements['toppings']},
+        'topping_costs': {0: 0} | {item.id: item.price for item in cake_elements['toppings']},
+        'berry_titles': {0: 'нет'} | {item.id: item.title for item in cake_elements['berries']},
+        'berry_costs': {0: 0} | {item.id: item.price for item in cake_elements['berries']},
+        'decor_titles': {0: 'нет'} | {item.id: item.title for item in cake_elements['decors']},
+        'decor_costs': {0: 0} | {item.id: item.price for item in cake_elements['decors']},
+    }
+    return render(
+        request,
+        template_name='index.html',
+        context={
+            'cake_elements': cake_elements,
+            'cake_elements_json': cake_elements_json,
+        }
+    )
 
 
 def view_lk_order(request):

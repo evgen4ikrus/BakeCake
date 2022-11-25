@@ -125,7 +125,8 @@
 		<article id="VueApp">
 			<section class="row pt-header" id="step3">
 				<h2 class="font_Gogh fs_40 cake_blue text-center">Создать свой торт</h2>
-				<v-form :validation-schema="schema1" @submit="ToStep4">
+				<form action="" method="post">
+                    {% csrf_token %}
 					<div class="d-flex justify-content-end align-items-center position-relative">
 				<span class="cake_pink position-absolute start-0 top-50">
 					<error-message name="lvls" class="from__alert"></error-message>
@@ -136,8 +137,9 @@
 					</div>
 					<div class="d-flex align-items-center flex-wrap mb-3">
 						<span class="me-3 fs_40 cake_blue">Количество уровней</span>
+                        
 						{% for size in cake_elements.sizes %}
-							<input type="radio" id={{size.title}} value={{size.id}} name="size" class="d-none cake__input">
+							<input type="radio" id={{size.title}} value="{{size.id}}" name="size" class="d-none cake__input">
 							<label for={{size.title}} class="mx-2 px-3 py-1 cake_grey cake__label ">{{size.title}}</label>
 						{% endfor %}
 					</div>
@@ -186,7 +188,8 @@
 						<button type="submit" class="btn text-white rounded-pill mt-3 shadow-none cake__button cake__bg_pink">Подтвердить</button>
 						<a href="#step4" ref="ToStep4" class="d-none"></a>
 					</div>
-				</v-form>
+                    
+				</form>
 			</section>
 
 			<section class="row pt-header" id="step4" v-if="Designed">

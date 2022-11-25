@@ -7,6 +7,25 @@ from .models import CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping
 
 
 def index(request):
+    if request.method == 'POST':
+        size = request.POST.get('size')
+        form = request.POST.get('form')
+        topping = request.POST.get('topping')
+        berry = request.POST.get('berry')
+        decor = request.POST.get('decor')
+        caption = request.POST.get('words')
+        comment = request.POST.get('comment')
+        if size:
+            size = CakeSize.objects.get(id=size)
+        if form:
+            form = CakeForm.objects.get(id=form)
+        if topping:
+            topping = CakeTopping.objects.get(id=topping)
+        if berry:
+            berry = CakeBerry.objects.get(id=berry)
+        if decor:
+            decor = CakeDecor.objects.get(id=decor)
+        
     cake_elements = {
         'sizes': CakeSize.objects.all(),
         'forms': CakeForm.objects.all(),

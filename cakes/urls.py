@@ -1,5 +1,5 @@
-from django.urls import path
 from django.shortcuts import render
+from django.urls import path
 
 from .views import index, view_lk, view_lk_order
 

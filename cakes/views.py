@@ -1,8 +1,15 @@
+
 from django.shortcuts import render, redirect
 from yookassa import Payment, Configuration
 
 import uuid
-from .models import Customer, Order
+
+from django.shortcuts import redirect, render
+from yookassa import Configuration, Payment
+
+from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
+                     Customer, Order)
+from django.contrib.auth.models import User
 
 from django.shortcuts import render
 from yookassa import Configuration, Payment
@@ -26,7 +33,31 @@ def index(request):
         cake_decor = request.GET.get('DECOR')
         cake_words = request.GET.get('WORDS')
         cake_name = request.GET.get('COMMENTS')
-        payment_url = make_payment(1,1,1000)
+        customer = Customer.objects.filter(phone_number=phone)
+        if not customer:
+            username, tail = email.split('@')
+            user = User.objects.create(username=username, email=email, password='12345cake', first_name=customer_name)
+            customer = Customer.objects.create(user=user, phone_number=phone, address=address)
+        cake_berries_obj=CakeBerry.objects.get(id=cake_berries)
+        cake_decor_obj = CakeDecor.objects.get(id=cake_decor)
+        cake_form_obj = CakeForm.objects.get(id=cake_form)
+        cake_levels_obj = CakeSize.objects.get(id=cake_levels)
+        cake_topping_obj = CakeTopping.objects.get(id=cake_topping)
+        total_cost = cake_berries_obj.price + cake_decor_obj.price + cake_form_obj.price + cake_levels_obj.price + cake_topping_obj.price
+        order = Order.objects.create(
+            customer=customer,
+            cake_size=cake_levels_obj,
+            cake_form=cake_form_obj,
+            cake_topping=cake_topping_obj,
+            cake_berry=cake_berries_obj,
+            cake_decor=cake_decor_obj,
+            cake_caption=cake_words,
+            order_comment=cake_name,
+            delivery_time=order_date,
+            delivery_comment=f'{order_time} {comment}',
+            total_cost = total_cost
+            )
+        payment_url = make_payment(customer.id, order.id, total_cost)
         return redirect(payment_url)
 
     cake_elements = {

@@ -1,9 +1,27 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from yookassa import Payment, Configuration
 import uuid
+from .models import Customer, Order
 
 
 def index(request):
+    phone = request.GET.get('PHONE')
+    if phone:
+        email = request.GET.get('EMAIL')
+        address = request.GET.get('ADDRESS')
+        order_date = request.GET.get('DATE')
+        order_time = request.GET.get('TIME')
+        comment = request.GET.get('DELIVCOMMENTS')
+        customer_name = request.GET.get('NAME')
+        cake_levels = request.GET.get('LEVELS')
+        cake_form = request.GET.get('FORM')
+        cake_topping = request.GET.get('TOPPING')
+        cake_berries = request.GET.get('BERRIES')
+        cake_decor = request.GET.get('DECOR')
+        cake_words = request.GET.get('WORDS')
+        cake_name = request.GET.get('COMMENTS')
+        payment_url = make_payment(1,1,1000)
+        return redirect(payment_url)
     return render(request, 'index.html')
 
 
@@ -42,7 +60,3 @@ def make_payment(client_id, order_id, amount, description="CakeBaker order"):
             }
         }, idempotence_key)
     return payment.confirmation.confirmation_url
-
-
-if __name__ == '__main__':
-    print(make_payment('1', '1', '100'))

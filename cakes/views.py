@@ -1,20 +1,12 @@
 
-from django.shortcuts import render, redirect
-from yookassa import Payment, Configuration
-
 import uuid
 
+from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from yookassa import Configuration, Payment
 
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
                      Customer, Order)
-from django.contrib.auth.models import User
-
-from django.shortcuts import render
-from yookassa import Configuration, Payment
-
-from .models import CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping
 
 
 def index(request):
@@ -89,15 +81,14 @@ def index(request):
     )
 
 
-def view_lk_order(request):
-    user = request.user
-    customer = Customer.objects.get(user=user)
-    orders = Order.objects.filter(customer=customer)
-    return render(request, 'lk-order.html', context={'orders': orders})
-
-
 def view_lk(request):
-    return render(request, 'lk.html')
+    user = request.user
+    try:
+        customer = Customer.objects.get(user=user)
+        orders = Order.objects.filter(customer=customer)
+        return render(request, 'lk.html', context={'orders': orders})
+    except:
+        return render(request, 'lk.html')
 
 
 def make_payment(client_id, order_id, amount, description="CakeBaker order"):

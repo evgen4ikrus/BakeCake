@@ -90,7 +90,10 @@ def index(request):
 
 
 def view_lk_order(request):
-    return render(request, 'lk-order.html')
+    user = request.user
+    customer = Customer.objects.get(user=user)
+    orders = Order.objects.filter(customer=customer)
+    return render(request, 'lk-order.html', context={'orders': orders})
 
 
 def view_lk(request):

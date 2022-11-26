@@ -1,20 +1,13 @@
-from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, redirect
-from yookassa import Payment, Configuration
-
 import uuid
+import json
 
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from yookassa import Configuration, Payment
 
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
                      Customer, Order)
-from django.contrib.auth.models import User
-
-from django.shortcuts import render
-from yookassa import Configuration, Payment
-
-from .models import CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping
 
 
 def index(request):
@@ -90,13 +83,22 @@ def index(request):
 
 
 def view_lk(request):
-    user = request.user
-    try:
-        customer = Customer.objects.get(user=user)
-        orders = Order.objects.filter(customer=customer)
-        return render(request, 'lk.html', context={'orders': orders})
-    except ObjectDoesNotExist:
-        return render(request, 'lk.html')
+    # доделаю/исправлю :)
+    if request.user.is_authenticated:
+        user = request.user
+        try:
+            customer = Customer.objects.get(user=user)
+            orders = Order.objects.filter(customer=customer)
+            customer_data = {
+                'name': user.username,
+                'phone_number': str(customer.phone_number),
+                'email': user.email,
+            }
+            customer_json = json.dumps(customer_data)
+            return render(request, 'lk.html', context={'orders': orders, 'customer_json': customer_json})
+        except ObjectDoesNotExist:
+            pass
+    return render(request, 'lk.html')
 
 
 def make_payment(client_id, order_id, amount, description="CakeBaker order"):

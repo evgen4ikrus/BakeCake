@@ -1,12 +1,20 @@
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import render, redirect
+from yookassa import Payment, Configuration
 
 import uuid
 
-from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from yookassa import Configuration, Payment
 
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
                      Customer, Order)
+from django.contrib.auth.models import User
+
+from django.shortcuts import render
+from yookassa import Configuration, Payment
+
+from .models import CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping
 
 
 def index(request):
@@ -47,7 +55,7 @@ def index(request):
             order_comment=cake_name,
             delivery_time=order_date,
             delivery_comment=f'{order_time} {comment}',
-            total_cost = total_cost
+            total_cost=total_cost
             )
         payment_url = make_payment(customer.id, order.id, total_cost)
         return redirect(payment_url)
@@ -87,7 +95,7 @@ def view_lk(request):
         customer = Customer.objects.get(user=user)
         orders = Order.objects.filter(customer=customer)
         return render(request, 'lk.html', context={'orders': orders})
-    except:
+    except ObjectDoesNotExist:
         return render(request, 'lk.html')
 
 

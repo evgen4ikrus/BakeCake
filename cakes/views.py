@@ -1,14 +1,19 @@
-import uuid
+import datetime
 import json
+import uuid
 
-from django.contrib.auth.models import User
 from django.contrib.auth import login
-from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
+from environs import Env
 from yookassa import Configuration, Payment
 
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
                      Customer, Order)
+
+
+env = Env()
+env.read_env()
 
 
 def index(request):
@@ -40,12 +45,21 @@ def index(request):
             username, tail = email.split('@')
             user = User.objects.create(username=username, email=email, password='12345cake', first_name=customer_name)
             customer = Customer.objects.create(user=user, phone_number=phone, address=address)
-        cake_berries_obj=CakeBerry.objects.get(id=cake_berries)
-        cake_decor_obj = CakeDecor.objects.get(id=cake_decor)
+        if cake_berries:
+            cake_berries_obj=CakeBerry.objects.get(id=cake_berries)
+        if cake_decor:
+            cake_decor_obj = CakeDecor.objects.get(id=cake_decor)
         cake_form_obj = CakeForm.objects.get(id=cake_form)
         cake_levels_obj = CakeSize.objects.get(id=cake_levels)
         cake_topping_obj = CakeTopping.objects.get(id=cake_topping)
         total_cost = cake_berries_obj.price + cake_decor_obj.price + cake_form_obj.price + cake_levels_obj.price + cake_topping_obj.price
+        if cake_words:
+            total_cost = total_cost + 500
+        if order_date:
+            order_date_dtobj = datetime.datetime.strptime(order_date, '%Y-%m-%d')
+            min_date = datetime.datetime.now() + datetime.timedelta(days=1)
+            if order_date_dtobj < min_date:
+                total_cost = total_cost * 1.2
         order = Order.objects.create(
             customer=customer,
             cake_size=cake_levels_obj,
@@ -136,7 +150,7 @@ def make_payment(client_id, order_id, amount, description="CakeBaker order"):
             },
         "confirmation": {
             "type": "redirect",
-            "return_url": "http://127.0.0.1:8000/"
+            "return_url": env('RETURN_URL')
             },
         "description": description,
         "metadata": {

@@ -55,7 +55,7 @@
 			<div class="col-12 col-xxl-6 d-flex flex-column justify-content-center align-items-center align-items-xxl-start">
 				<h1 class="font_Gogh fs_40 cake_blue">Создайте торт своей мечты</h1>
 				<span class="cake_grey fw-lighter">Уникальность и красота в пару кликов</span>
-				<a href="#step3" class="btn text-white rounded-pill px-5 mt-3 shadow-none cake__button cake__bg_pink">Создать</a>
+				<a href="index#step3" class="btn text-white rounded-pill px-5 mt-3 shadow-none cake__button cake__bg_pink">Создать</a>
 			</div>
 			<div class="position-fixed bottom-0 m-5 w-auto end-0">
 				<div class="d-flex">
@@ -279,6 +279,7 @@
                                             <li>Декор: {{ DATA.Decors[Decor] }}</li>
                                         </ul>
                                         <span>{{ Words === '' ? 'Без надписи' : Words }}</span>
+										<span>Если срок исполнения заказа менее 24ч то итоговая цена будет увеличена на 20%</span>
                                     {% endverbatim %}
 								</div>
 							</div>

@@ -12,6 +12,8 @@ from yookassa import Configuration, Payment
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
                      Customer, Order)
 
+from django.db.utils import IntegrityError
+
 env = Env()
 env.read_env()
 
@@ -41,18 +43,27 @@ def index(request):
         cake_words = request.GET.get('WORDS')
         cake_name = request.GET.get('COMMENTS')
         customer = Customer.objects.filter(phone_number=phone)
+        if customer:
+            customer = customer[0]
         if not customer:
             username, tail = email.split('@')
-            user = User.objects.create(username=username, email=email, password='12345cake', first_name=customer_name)
-            customer = Customer.objects.create(user=user, phone_number=phone, address=address)
-        if cake_berries:
-            cake_berries_obj=CakeBerry.objects.get(id=cake_berries)
-        if cake_decor:
-            cake_decor_obj = CakeDecor.objects.get(id=cake_decor)
+            try:
+                user = User.objects.create(username=username, email=email, password='12345cake', first_name=customer_name)
+                customer = Customer.objects.create(user=user, phone_number=phone, address=address)
+            except IntegrityError:
+                 return render(request, 'error.html')
         cake_form_obj = CakeForm.objects.get(id=cake_form)
         cake_levels_obj = CakeSize.objects.get(id=cake_levels)
-        cake_topping_obj = CakeTopping.objects.get(id=cake_topping)
-        total_cost = cake_berries_obj.price + cake_decor_obj.price + cake_form_obj.price + cake_levels_obj.price + cake_topping_obj.price
+        cake_topping_obj = CakeTopping.objects.get(id=cake_topping)        
+        total_cost = cake_form_obj.price + cake_levels_obj.price + cake_topping_obj.price
+        cake_berries_obj=None
+        cake_decor_obj=None
+        if cake_berries:
+            cake_berries_obj=CakeBerry.objects.get(id=cake_berries)
+            total_cost += cake_berries_obj.price
+        if cake_decor:
+            cake_decor_obj = CakeDecor.objects.get(id=cake_decor)
+            total_cost += cake_decor_obj.price
         if cake_words:
             total_cost = total_cost + 500
         if order_date:

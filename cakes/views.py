@@ -2,6 +2,7 @@ import uuid
 import json
 
 from django.contrib.auth.models import User
+from django.contrib.auth import login
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from yookassa import Configuration, Payment
@@ -11,6 +12,14 @@ from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
 
 
 def index(request):
+    reg = request.GET.get('REG')
+    if reg:
+        try:
+            customer = Customer.objects.get(phone_number=reg)
+            if customer:
+                login(request, customer.user)
+        except:
+            pass
     phone = request.GET.get('PHONE')
     if phone:
         email = request.GET.get('EMAIL')

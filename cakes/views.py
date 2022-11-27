@@ -1,28 +1,31 @@
-
-from django.shortcuts import render, redirect
-from yookassa import Payment, Configuration
-
+import datetime
+import json
 import uuid
 
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
+from environs import Env
 from yookassa import Configuration, Payment
 
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
                      Customer, Order)
-from django.contrib.auth.models import User
 
-from django.shortcuts import render
-from yookassa import Configuration, Payment
-
-from .models import CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping
-from environs import Env
-import datetime
 
 env = Env()
 env.read_env()
 
 
 def index(request):
+    reg = request.GET.get('REG')
+    if reg:
+        try:
+            customer = Customer.objects.get(phone_number=reg)
+            if customer:
+                login(request, customer.user)
+        except:
+            pass
     phone = request.GET.get('PHONE')
     if phone:
         email = request.GET.get('EMAIL')
@@ -69,7 +72,7 @@ def index(request):
             order_comment=cake_name,
             delivery_time=order_date,
             delivery_comment=f'{order_time} {comment}',
-            total_cost = total_cost
+            total_cost=total_cost
             )
         payment_url = make_payment(customer.id, order.id, total_cost)
         return redirect(payment_url)
@@ -103,12 +106,31 @@ def index(request):
     )
 
 
-def view_lk_order(request):
-    return render(request, 'lk-order.html')
-
-
 def view_lk(request):
-    return render(request, 'lk.html')
+    # доделаю/исправлю :)
+    customer_data = {
+        'name': '',
+        'phone_number': '',
+        'email': '',
+    }
+    user = request.user
+    if user.username:
+        customer_data = {
+            'name': user.username,
+            'phone_number': '',
+            'email': user.email,
+        }
+        try:
+            customer = Customer.objects.get(user=user)
+            orders = Order.objects.filter(customer=customer)
+            customer_data['phone_number'] = str(customer.phone_number),
+            customer_json = json.dumps(customer_data)
+            return render(request, 'lk.html', context={'orders': orders, 'customer_json': customer_json})
+        except:
+            # определиться с исключением
+            pass
+    customer_json = json.dumps(customer_data)
+    return render(request, 'lk.html', context={'customer_json': customer_json})
 
 
 def make_payment(client_id, order_id, amount, description="CakeBaker order"):

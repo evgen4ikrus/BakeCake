@@ -4,6 +4,7 @@
 Личный кабинет
 {% endblock title %}
 {% block content %}
+<script type='text/javascript'>var customer = {{ customer_json|safe }}</script>
 <div class="container mt-header mb-5">
 	<div class="row mt-5">
 		<div class="col-12 col-xxl-6 d-flex justify-content-center">
@@ -61,57 +62,97 @@
 				</div>
 			</v-form>
 			<h2 class="fs_40 cake_pink mt-5">Мои заказы</h2>
-			<span class="cake_grey">У вас еще нет заказов.</span>
-			<p class="cake_grey">Вы можете добавить торт из <a href="./index.html#step2" class="text-decoration-none cake_pink">Каталога</a> или <a href="./index.html#step3" class="text-decoration-none cake_pink">Создать свой</a>.</p>
-			<span class="cake_grey">Есть вопросы?</span>
-			<span class="cake_grey">Воспользуйтесь нашим <a href="https://vk.com/devmanorg" class="text-decoration-none cake_pink">чат-ботом</a>.</span>
-			<button class="btn text-white rounded-pill align-self-end px-5 mt-3 shadow-none cake__button cake__bg_pink">Выйти</button>
+			{% if orders %}
+				{% for order in orders %}
+					<section class="my-2">
+						<span class="cake_blue lk__order d-flex" data-bs-toggle="modal" data-bs-target="#OrderModa{{order.id}}">
+							<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-clock-fill" viewBox="0 0 16 16">
+								{% if order.status == 2 %}
+									<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+								{% else %}
+									<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+								{% endif %}
+									</svg>
+									<span class="ms-1">#{{ order.id }} торт собственной сборки</span>
+								</span>
+								<aside class="modal fade" id="OrderModa{{order.id}}" tabindex="-1" aria-labelledby="ModalLabe{{order.id}}" aria-hidden="true">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title cake_pink" id="ModalLabel2">#{{ order.id }} торт собственной сборки</h5>
+												<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+											</div>
+										<div class="modal-body">
+											<span class="cake_blue">Уровней: {{ order.cake_size }}</span><br>
+											<span class="cake_blue">Форма: {{ order.cake_form }}</span><br>
+											<span class="cake_blue">Топпинг: {{ order.cake_topping }}</span><br>
+											<span class="cake_blue">Ягоды: {% if order.cake_berry %}{{order.cake_berry}}{% else %}нет{% endif %}</span><br>
+											<span class="cake_blue">Декор: {% if order.cake_decor %}{{order.cake_decor}}{% else %}нет{% endif %}</span><br>
+											<span class="cake_blue">{% if order.cake_caption %}Надпись: {{order.cake_caption}}{% else %}Без надписи{% endif %}</span><br>
+											<span class="cake_pink">Цена: {{ order.total_cost }}</span>
+										</div>
+									<div class="modal-footer d-flex justify-content-between">
+										<span class="cake_blue d-flex">Статус: {{ order.get_status_display }}</span>
+										<span class="cake_blue d-flex align-items-center">Дата и время доставки: {{ order.delivery_time }}</span>
+									</div>
+								</div>
+							</div>
+						</aside>
+					</section>
+				{% endfor %}
 			{% else %}
-			<a class="nav-link fw-lighter me-1 cake_blue position-relative" href="#RegModal" data-bs-toggle="modal">
-				<label for="reg" class="modal-title font_Gogh fs_40 cake_blue" id="RegModalLabel">Вход / Регистрация</label>
-				<!--метка на иконке, убрать класс d-none чтоб появилась-->
-				<span class="position-absolute translate-middle badge rounded-pill cake__bg_pink fs_8 d-none"></span>
-			</a>
-			<aside class="modal fade" id="RegModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RegModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered">
-					<div class="modal-content px-4 cake__modal">
-						<div class="modal-header border-0 pb-0 pt-4">
-							<button @click="Reset" type="button" class="btn-close border rounded-pill" data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-header border-0 py-0">
-							<label for="reg" class="modal-title font_Gogh fs_40 cake_blue" id="RegModalLabel">Вход / Регистрация</label>
-						</div>
-						<form class="d-none">
-							<input v-model="RegInput" type="text" name="REG">
-							<button type="submit" ref="HiddenFormSubmitReg">reg</button>
-						</form>
-						<v-form :validation-schema="RegSchema" class="modal-body position-relative d-flex flex-column align-items-center px-5 pb-4" @submit="RegSubmit">
-							<v-field v-if="RegInput !== 'Регистрация успешна'" v-model="RegInput" name="reg" type="text" id="reg" :placeholder="Step === `Number` ? `Введите ваш номер` : `Введите код`" class="form-control cake__textinput"></v-field>
-							<v-field v-if="Step === 'Number'" v-model="RegInput" type="phone" name="phone_format" class="d-none"></v-field>
-							<v-field v-if="Step === 'Code'" v-model="RegInput" type="phone" name="code_format" class="d-none"></v-field>
-							<button v-if="RegInput !== 'Регистрация успешна'" type="submit" class="btn text-white w-100 rounded-pill mt-3 py-2 shadow-none cake__button fs_12 cake__bg_pink">Отправить</button>
-							<span v-if="RegInput === 'Регистрация успешна'" class="cake_grey text-center">Регистрация успешна</span>
-							<small class="fs_12 cake_pink text-center position-absolute bottom-0"><error-message name="reg">
-								<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-exclamation-circle mb-1" viewBox="0 0 16 16">
-									<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-									<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
-								</svg>
+				<span class="cake_grey">У вас еще нет заказов.</span>
+				<p class="cake_grey">Вы можете добавить торт из <a href="./index.html#step2" class="text-decoration-none cake_pink">Каталога</a> или <a href="./index.html#step3" class="text-decoration-none cake_pink">Создать свой</a>.</p>
+				<span class="cake_grey">Есть вопросы?</span>
+				<span class="cake_grey">Воспользуйтесь нашим <a href="https://vk.com/devmanorg" class="text-decoration-none cake_pink">чат-ботом</a>.</span>
+			{% endif %}
+				<button class="btn text-white rounded-pill align-self-end px-5 mt-3 shadow-none cake__button cake__bg_pink">Выйти</button>
+			{% else %}
+				<a class="nav-link fw-lighter me-1 cake_blue position-relative" href="#RegModal" data-bs-toggle="modal">
+					<label for="reg" class="modal-title font_Gogh fs_40 cake_blue" id="RegModalLabel">Вход / Регистрация</label>
+					<!--метка на иконке, убрать класс d-none чтоб появилась-->
+					<span class="position-absolute translate-middle badge rounded-pill cake__bg_pink fs_8"></span>
+				</a>
+				<aside class="modal fade" id="RegModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RegModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content px-4 cake__modal">
+							<div class="modal-header border-0 pb-0 pt-4">
+								<button @click="Reset" type="button" class="btn-close border rounded-pill" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-header border-0 py-0">
+								<label for="reg" class="modal-title font_Gogh fs_40 cake_blue" id="RegModalLabel">Вход / Регистрация</label>
+							</div>
+							<form class="d-none">
+								<input v-model="RegInput" type="text" name="REG">
+								<button type="submit" ref="HiddenFormSubmitReg">reg</button>
+							</form>
+							<v-form :validation-schema="RegSchema" class="modal-body position-relative d-flex flex-column align-items-center px-5 pb-4" @submit="RegSubmit">
+								<v-field v-if="RegInput !== 'Регистрация успешна'" v-model="RegInput" name="reg" type="text" id="reg" :placeholder="Step === `Number` ? `Введите ваш номер` : `Введите код`" class="form-control cake__textinput"></v-field>
+								<v-field v-if="Step === 'Number'" v-model="RegInput" type="phone" name="phone_format" class="d-none"></v-field>
+								<v-field v-if="Step === 'Code'" v-model="RegInput" type="phone" name="code_format" class="d-none"></v-field>
+								<button v-if="RegInput !== 'Регистрация успешна'" type="submit" class="btn text-white w-100 rounded-pill mt-3 py-2 shadow-none cake__button fs_12 cake__bg_pink">Отправить</button>
+								<span v-if="RegInput === 'Регистрация успешна'" class="cake_grey text-center">Регистрация успешна</span>
+								<small class="fs_12 cake_pink text-center position-absolute bottom-0"><error-message name="reg">
+									<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-exclamation-circle mb-1" viewBox="0 0 16 16">
+										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+									</svg>
+									{% verbatim %}
+										{{Step === 'Number' ? 'Введите номер' : 'Введите код'}}</error-message></small>
+									{% endverbatim %}
+								<error-message name="phone_format" class="fs_12 cake_pink text-center position-absolute bottom-0"></error-message>
+								<error-message name="code_format" class="fs_12 cake_pink text-center position-absolute bottom-0"></error-message>
+							</v-form>
+		
+							<div class="modal-footer d-flex flex-column justify-content-between align-items-center text-center border-0 mx-5">
 								{% verbatim %}
-									{{Step === 'Number' ? 'Введите номер' : 'Введите код'}}</error-message></small>
+									<p class="fs_12 cake_grey">{{Step === `Number` ? `Нажимая на кнопку, вы соглашаетесь на обработку персональных данных в соответствии с политикой конфиденциальности` : Step === 'Code' ? `Осталось времени: 05:00` : ``}}</p>
 								{% endverbatim %}
-							<error-message name="phone_format" class="fs_12 cake_pink text-center position-absolute bottom-0"></error-message>
-							<error-message name="code_format" class="fs_12 cake_pink text-center position-absolute bottom-0"></error-message>
-						</v-form>
-	
-						<div class="modal-footer d-flex flex-column justify-content-between align-items-center text-center border-0 mx-5">
-							{% verbatim %}
-								<p class="fs_12 cake_grey">{{Step === `Number` ? `Нажимая на кнопку, вы соглашаетесь на обработку персональных данных в соответствии с политикой конфиденциальности` : Step === 'Code' ? `Осталось времени: 05:00` : ``}}</p>
-							{% endverbatim %}
-							<a href="#" v-if="Step === `Code`" @click.prevent="ToRegStep1" class="text-decoration-none cake_pink fs_12">изменить данные</a>
+								<a href="#" v-if="Step === `Code`" @click.prevent="ToRegStep1" class="text-decoration-none cake_pink fs_12">изменить данные</a>
+							</div>
 						</div>
 					</div>
-				</div>
-			</aside>			
+				</aside>			
 			{% endif %}
 			{% endblock ifauth %}
 		</div>

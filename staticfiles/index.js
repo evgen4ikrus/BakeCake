@@ -96,14 +96,15 @@ Vue.createApp({
                         return true;
                     }
                     return ' время доставки';
-                }
+                },
+                checkbox: false,
             },
             DATA: {
                 Levels: cake_elements.size_titles,
                 Forms: cake_elements.form_titles,
                 Toppings: cake_elements.topping_titles,
                 Berries: cake_elements.berry_titles,
-                Decors: cake_elements.decor_titles
+                Decors: cake_elements.decor_titles,
             },
             Costs: {
                 Levels: cake_elements.size_costs,
@@ -135,7 +136,16 @@ Vue.createApp({
         ToStep4() {
             this.Designed = true
             setTimeout(() => this.$refs.ToStep4.click(), 0);
-        }
+        },
+        submit () {
+            this.$v.$touch()
+          },
+        clear () {
+            this.$v.$reset()
+            this.select = null
+            this.checkbox = false
+          },
+        
     },
     computed: {
         Cost() {
@@ -143,6 +153,7 @@ Vue.createApp({
             return this.Costs.Levels[this.Levels] + this.Costs.Forms[this.Form] +
                 this.Costs.Toppings[this.Topping] + this.Costs.Berries[this.Berries] +
                 this.Costs.Decors[this.Decor] + W
-        }
+        },
+
     }
 }).mount('#VueApp')

@@ -114,14 +114,12 @@ def view_lk(request):
     }
     user = request.user
     if user.username:
-        customer_data = {
-            'name': user.username,
-            'phone_number': '',
-            'email': user.email,
-        }
+        customer_data['name'] = user.username
+        customer_data['email'] = user.email
         try:
             customer = Customer.objects.get(user=user)
             orders = Order.objects.filter(customer=customer)
+            customer_data['name'] = user.first_name
             customer_data['phone_number'] = str(customer.phone_number),
             customer_json = json.dumps(customer_data)
             return render(request, 'lk.html', context={'orders': orders, 'customer_json': customer_json})

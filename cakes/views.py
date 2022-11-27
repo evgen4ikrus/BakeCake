@@ -4,7 +4,6 @@ import uuid
 
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from environs import Env
 from yookassa import Configuration, Payment

@@ -4,13 +4,13 @@ import uuid
 
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from environs import Env
 from yookassa import Configuration, Payment
 
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
                      Customer, Order)
-
 
 env = Env()
 env.read_env()
@@ -106,7 +106,18 @@ def index(request):
 
 
 def view_lk(request):
-    # доделаю/исправлю :)
+    if request.method == 'POST':
+        phone = request.POST.get('PHONE')
+        name = request.POST.get('NAME')
+        email = request.POST.get('EMAIL')
+        user = request.user
+        customer = Customer.objects.get(user=request.user)
+        user.first_name = name
+        user.email = email
+        customer.phone_number = phone
+        customer.save()
+        user.save()
+
     customer_data = {
         'name': '',
         'phone_number': '',
@@ -123,8 +134,7 @@ def view_lk(request):
             customer_data['phone_number'] = str(customer.phone_number),
             customer_json = json.dumps(customer_data)
             return render(request, 'lk.html', context={'orders': orders, 'customer_json': customer_json})
-        except:
-            # определиться с исключением
+        except ObjectDoesNotExist:
             pass
     customer_json = json.dumps(customer_data)
     return render(request, 'lk.html', context={'customer_json': customer_json})

@@ -117,6 +117,14 @@ def index(request):
 
 
 def view_lk(request):
+    reg = request.GET.get('reg')
+    if reg:
+        try:
+            customer = Customer.objects.get(phone_number=reg)
+            if customer:
+                login(request, customer.user)
+        except ObjectDoesNotExist:
+            pass
     if request.method == 'POST':
         phone = request.POST.get('PHONE')
         name = request.POST.get('NAME')

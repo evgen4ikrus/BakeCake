@@ -84,21 +84,29 @@ def index(request):
 
 def view_lk(request):
     # доделаю/исправлю :)
-    if request.user.is_authenticated:
-        user = request.user
+    customer_data = {
+        'name': '',
+        'phone_number': '',
+        'email': '',
+    }
+    user = request.user
+    if user.username:
+        customer_data = {
+            'name': user.username,
+            'phone_number': '',
+            'email': user.email,
+        }
         try:
             customer = Customer.objects.get(user=user)
             orders = Order.objects.filter(customer=customer)
-            customer_data = {
-                'name': user.username,
-                'phone_number': str(customer.phone_number),
-                'email': user.email,
-            }
+            customer_data['phone_number'] = str(customer.phone_number),
             customer_json = json.dumps(customer_data)
             return render(request, 'lk.html', context={'orders': orders, 'customer_json': customer_json})
-        except ObjectDoesNotExist:
+        except:
+            # определиться с исключением
             pass
-    return render(request, 'lk.html')
+    customer_json = json.dumps(customer_data)
+    return render(request, 'lk.html', context={'customer_json': customer_json})
 
 
 def make_payment(client_id, order_id, amount, description="CakeBaker order"):

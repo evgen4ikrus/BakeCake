@@ -142,4 +142,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Configuration for YOOMONEY payment service
 Configuration.secret_key = env('YOOMONEY_KEY')
 Configuration.account_id = env('YOOMONEY_SHOPID')
-LOGOUT_REDIRECT_URL = '/index'
+LOGOUT_REDIRECT_URL = '/'

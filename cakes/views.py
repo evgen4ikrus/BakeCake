@@ -106,12 +106,30 @@ def index(request):
         'decor_titles': {0: 'нет'} | {item.id: item.title for item in cake_elements['decors']},
         'decor_costs': {0: 0} | {item.id: item.price for item in cake_elements['decors']},
     }
+    customer_data = {
+        'name': '',
+        'phone_number': '',
+        'email': '',
+    }
+    user = request.user
+    if user.username:
+        customer_data['name'] = user.username
+        customer_data['email'] = user.email
+        try:
+            customer = Customer.objects.get(user=user)
+            customer_data['name'] = user.first_name
+            customer_data['address'] = customer.address
+            customer_data['phone_number'] = str(customer.phone_number)
+        except ObjectDoesNotExist:
+            pass
+    customer_json = json.dumps(customer_data)
     return render(
         request,
         template_name='index.html',
         context={
             'cake_elements': cake_elements,
             'cake_elements_json': cake_elements_json,
+            'customer_json': customer_json
         }
     )
 

@@ -10,9 +10,10 @@ from environs import Env
 from yookassa import Configuration, Payment
 
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
-                     Customer, Order)
+                     Customer, Order, Promocod)
 
 from django.db.utils import IntegrityError
+
 
 env = Env()
 env.read_env()
@@ -42,6 +43,7 @@ def index(request):
         cake_decor = request.GET.get('DECOR')
         cake_words = request.GET.get('WORDS')
         cake_name = request.GET.get('COMMENTS')
+        raw_promocod = request.GET.get('PROMOCOD')
         customer = Customer.objects.filter(phone_number=phone)
         if customer:
             customer = customer[0]
@@ -71,6 +73,19 @@ def index(request):
             min_date = datetime.datetime.now() + datetime.timedelta(days=1)
             if order_date_dtobj < min_date:
                 total_cost = total_cost * 1.2
+        if raw_promocod:
+            checked_promocode = Promocod.objects.filter(promocod=raw_promocod)
+            if checked_promocode:
+                total_cost = total_cost - total_cost * checked_promocode[0].discount / 100
+            else:
+                error_text = 'Не действительный промокод'
+                return render(
+                    request,
+                    template_name='error.html',
+                    context={
+                        'page_error': error_text
+                    }
+                    )
         order = Order.objects.create(
             customer=customer,
             cake_size=cake_levels_obj,

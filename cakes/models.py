@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Customer(models.Model):
@@ -158,3 +159,12 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = '      Заказы'
+
+
+class Promocod(models.Model):
+    promocod = models.CharField('Промокод', max_length=20)
+    discount = models.IntegerField('Скидка в процентах %', validators=[MaxValueValidator(100), MinValueValidator(1)])
+
+    class Meta:
+        verbose_name = 'Промокод'
+        verbose_name_plural = '      Промокоды'

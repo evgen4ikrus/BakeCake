@@ -97,7 +97,17 @@ Vue.createApp({
                     }
                     return ' время доставки';
                 },
-                checkbox: false,
+                promocod_format: (value) => {
+                    const regex = /^[a-zA-Zа-яА-Я]+$/
+                    if (!value) {
+                        return true;
+                    }
+                    if ( !regex.test(value)) {
+
+                        return '⚠ Проверьте дейтвительность промокода';
+                    }
+                    return true;
+                },
             },
             DATA: {
                 Levels: cake_elements.size_titles,
@@ -129,7 +139,9 @@ Vue.createApp({
             Address: customer.address,
             Dates: null,
             Time: null,
-            DelivComments: ''
+            DelivComments: '',
+            checkbox: false,
+            Promocod: null
         }
     },
     methods: {

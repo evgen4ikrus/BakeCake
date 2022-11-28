@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
-                     Customer, Order)
+                     Customer, Order, Promocod)
 
 
 class CustomerInline(admin.StackedInline):
@@ -71,6 +71,14 @@ class CakeToppingAdmin(admin.ModelAdmin):
     list_display = [
         'title',
         'price'
+    ]
+
+
+@admin.register(Promocod)
+class PromocodAdmin(admin.ModelAdmin):
+    list_display = [
+        'promocod',
+        'discount'
     ]
 
 

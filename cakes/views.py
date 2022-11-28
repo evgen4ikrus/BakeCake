@@ -102,7 +102,8 @@ def index(request):
             order_comment=cake_name,
             delivery_time=order_date,
             delivery_comment=f'{order_time} {comment}',
-            total_cost=total_cost
+            total_cost=total_cost,
+            status=1
             )
         payment_url = make_payment(customer.id, order.id, total_cost)
         return redirect(payment_url)

@@ -49,15 +49,15 @@ def index(request):
                 user = User.objects.create(username=username, email=email, password='12345cake', first_name=customer_name)
                 customer = Customer.objects.create(user=user, phone_number=phone, address=address)
             except IntegrityError:
-                 return render(request, 'error.html')
+                return render(request, 'error.html')
         cake_form_obj = CakeForm.objects.get(id=cake_form)
         cake_levels_obj = CakeSize.objects.get(id=cake_levels)
         cake_topping_obj = CakeTopping.objects.get(id=cake_topping)        
         total_cost = cake_form_obj.price + cake_levels_obj.price + cake_topping_obj.price
-        cake_berries_obj=None
-        cake_decor_obj=None
+        cake_berries_obj = None
+        cake_decor_obj = None
         if cake_berries:
-            cake_berries_obj=CakeBerry.objects.get(id=cake_berries)
+            cake_berries_obj = CakeBerry.objects.get(id=cake_berries)
             total_cost += cake_berries_obj.price
         if cake_decor:
             cake_decor_obj = CakeDecor.objects.get(id=cake_decor)
@@ -142,12 +142,6 @@ def view_lk(request):
 
 
 def make_payment(client_id, order_id, amount, description="CakeBaker order"):
-    #will fix after debug function and complete writting of views, don't beat me for a while :)
-    from environs import Env
-    env = Env()
-    env.read_env()
-    Configuration.account_id = env('YOOMONEY_SHOPID')
-    Configuration.secret_key = env('YOOMONEY_KEY')
     idempotence_key = str(uuid.uuid4())
     payment = Payment.create({
         "amount": {

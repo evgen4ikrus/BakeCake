@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from environs import Env
-from yookassa import Configuration, Payment
+from yookassa import Payment
 
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
                      Customer, Order, Promocod)
@@ -26,7 +26,7 @@ def index(request):
             customer = Customer.objects.get(phone_number=reg)
             if customer:
                 login(request, customer.user)
-        except:
+        except ObjectDoesNotExist:
             pass
     phone = request.GET.get('PHONE')
     if phone:
@@ -50,13 +50,18 @@ def index(request):
         if not customer:
             username, tail = email.split('@')
             try:
-                user = User.objects.create(username=username, email=email, password='12345cake', first_name=customer_name)
+                user = User.objects.create(
+                    username=username,
+                    email=email,
+                    password='12345cake',
+                    first_name=customer_name
+                )
                 customer = Customer.objects.create(user=user, phone_number=phone, address=address)
             except IntegrityError:
                 return render(request, 'error.html')
         cake_form_obj = CakeForm.objects.get(id=cake_form)
         cake_levels_obj = CakeSize.objects.get(id=cake_levels)
-        cake_topping_obj = CakeTopping.objects.get(id=cake_topping)        
+        cake_topping_obj = CakeTopping.objects.get(id=cake_topping)
         total_cost = cake_form_obj.price + cake_levels_obj.price + cake_topping_obj.price
         cake_berries_obj = None
         cake_decor_obj = None

@@ -1,6 +1,6 @@
+from django.contrib.auth.views import LogoutView
 from django.shortcuts import render
 from django.urls import path
-from django.contrib.auth.views import LogoutView
 
 from .views import index, view_lk
 

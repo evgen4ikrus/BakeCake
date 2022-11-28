@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from environs import Env
-from yookassa import Configuration, Payment
+from yookassa import Payment
 
 from .models import (CakeBerry, CakeDecor, CakeForm, CakeSize, CakeTopping,
                      Customer, Order, Promocod)
@@ -97,7 +97,8 @@ def index(request):
             order_comment=cake_name,
             delivery_time=order_date,
             delivery_comment=f'{order_time} {comment}',
-            total_cost=total_cost
+            total_cost=total_cost,
+            status=1
             )
         payment_url = make_payment(customer.id, order.id, total_cost)
         return redirect(payment_url)
